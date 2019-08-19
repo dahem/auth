@@ -1,0 +1,21 @@
+{
+  "extends": ["airbnb"],
+  "plugins": ["prettier", "jest"],
+  "rules": {
+    "import/prefer-default-export": "off",
+    "no-param-reassign": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      },
+      "alias": {
+        "map": [["test", "./test"]]
+      }
+    }
+  },
+  "env": {
+    "jest": true
+  }
+}
