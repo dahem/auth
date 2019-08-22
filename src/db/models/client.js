@@ -7,12 +7,16 @@ export default (sequelize) => {
         through: 'ClientUser',
         foreignKey: 'clientId',
       });
+      this.belongsTo(sequelize.models.Address, {
+        foreignKey: 'addressId',
+      });
     }
   }
   Client.init(
     {
       name: {
         type: Sequelize.STRING,
+        canUpdate: false,
         allowNull: false,
       },
       active: {

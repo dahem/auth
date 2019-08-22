@@ -21,7 +21,7 @@ app.use(routes);
 
 // TODO check when is call
 app.use((errors, req, res) => {
-  console.log(Object.keys(errors));
+  console.log('xxxxxxxxx', Object.keys(errors));
   res.status(500).send({ errors });
 });
 

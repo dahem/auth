@@ -12,9 +12,14 @@ async function update(model, id, body) {
   return getById(model, id);
 }
 
+async function remove(model, id) {
+  return model.destroy({ where: { id } });
+}
+
 export default model => ({
   getById: id => getById(model, id),
   getAll: () => model.findAll(),
   create: body => create(model, body),
   update: (id, body) => update(model, id, body),
+  remove: id => remove(model, id),
 });

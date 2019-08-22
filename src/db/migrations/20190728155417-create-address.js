@@ -1,20 +1,11 @@
 import { createAndDropTable, timestampsColumns } from '../util';
 
-const tableName = 'Client';
+const tableName = 'Address';
 const defineTable = Sequelize => ({
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-  },
-  active: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-  },
-  addressId: {
-    type: Sequelize.INTEGER,
-    references: { model: 'Address', key: 'id' },
   },
   name: {
     type: Sequelize.STRING,

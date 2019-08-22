@@ -37,6 +37,5 @@ export default validations => async (req, res, next) => {
   if (errors.isEmpty()) {
     return next();
   }
-  console.log(statusErrors);
   return res.status(findMostCommon(statusErrors)).json({ errors: errors.array() });
 };

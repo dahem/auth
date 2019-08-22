@@ -1,5 +1,12 @@
 GET http://localhost:6666/users HTTP/1.1
+###
+GET http://localhost:6666/clients HTTP/1.1
 
+
+###
+GET http://localhost:6666/clients HTTP/1.1
+
+###
 ###
 
 GET http://localhost:6666/users/1 HTTP/1.1
@@ -10,12 +17,33 @@ GET http://localhost:6666/users/1000 HTTP/1.1
 
 ###
 
-POST http://localhost:6666/auth HTTP/1.1
+POST http://localhost:6666/clients HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "user 1",
-    "password": "Duvetain1"
+    "id": 50,
+    "name": "client 2",
+    "deletedAt": "2019-08-21T03:07:29.000Z",
+    "users": [
+        {
+            "id":50,
+            "username": "nury10",
+            "password": "frfdfdd1@D"
+        }
+    ]
+}
+
+###
+
+PATCH http://localhost:6666/clients/37 HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": 37,
+  "name": "clidddddenddt3",
+  "active": false,
+  "createdAt": "2019-09-22T02:57:47.000Z",
+  "updatedAt": "2019-08-22T02:57:47.000Z"
 }
 
 ###

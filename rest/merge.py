@@ -1,17 +1,20 @@
+total = 0
 def merge(a,b):
+  global total
   i = 0
   j = 0
   sol = []
   while i < len(a) and j < len(b):
-    if (a[i] < b[j]):
+    if (a[i] <= b[j]):
       sol.append(a[i])
       i += 1
     else:
       sol.append(b[j])
+      total += j+1
       j += 1
   return sol+a[i:]+b[j:]
 
-c = [3,1,4,5,1,8,3,9,5,8,7,9,10,2]
+c = [4, 5, 10, 2, 1, 3, 6, 8]
 
 def mergeSort(c):
   if len(c) == 1:
@@ -22,4 +25,4 @@ def mergeSort(c):
     b = mergeSort(c[mid:])
     return merge(a,b)
 
-print(mergeSort(c))
+print(mergeSort(c), total)
