@@ -28,6 +28,7 @@ async function getErrors(model, values) {
     return error !== null ? [error] : [];
   }
   const errors = await simpleValidate(model, values);
+
   const { uniqueKeys } = model;
   const uniqueQuery = Object.keys(uniqueKeys).map((key) => {
     const uniqueItem = {};
@@ -81,6 +82,13 @@ async function getErrorsToUpdate(availableIds, model, values) {
   if (availableIds !== null) {
     return availableIds.includes(values.id) ? [] : [new Error(`Id not is associate:${values.id}`)];
   }
+
+  try {
+    await model.build(values).validate();
+  } catch (error) {
+    return error.errors.filter(x => x.type === 'Validation error').map(x => x.original);
+  }
+
   const instance = await model.findByPk(values.id);
 
   errors.push(
