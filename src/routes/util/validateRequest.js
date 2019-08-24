@@ -33,7 +33,7 @@ export default validations => async (req, res, next) => {
     }),
   );
 
-  const errors = validationResult(req);
+  const errors = await validationResult(req);
   if (errors.isEmpty()) {
     return next();
   }

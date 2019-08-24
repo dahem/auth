@@ -1,4 +1,4 @@
-import { createAndDropTable, timestampsColumns } from '../util';
+import { createAndDropTable, timestampsColumns } from '../util/migration';
 
 const tableName = 'User';
 const defineTable = Sequelize => ({

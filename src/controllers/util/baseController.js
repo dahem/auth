@@ -3,7 +3,7 @@ function getById(model, id) {
 }
 
 async function create(model, body) {
-  const instance = await model.create(body, { include: [{ all: true }] });
+  const instance = await model.fullCreate(body);
   return getById(model, instance.id);
 }
 
