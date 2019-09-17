@@ -29,15 +29,6 @@ async function getErrors(model, values) {
   }
   const errors = await simpleValidate(model, values);
 
-  const { uniqueKeys } = model;
-  const uniqueQuery = Object.keys(uniqueKeys).map((key) => {
-    const uniqueItem = {};
-    uniqueKeys[key].fields.forEach((field) => {
-      uniqueItem[field] = values[field];
-    });
-    return uniqueItem;
-  });
-
   errors.push(
     await Promise.all(
       Object.keys(values)
@@ -59,6 +50,15 @@ async function getErrors(model, values) {
         }),
     ),
   );
+
+  const { uniqueKeys } = model;
+  const uniqueQuery = Object.keys(uniqueKeys).map((key) => {
+    const uniqueItem = {};
+    uniqueKeys[key].fields.forEach((field) => {
+      uniqueItem[field] = values[field];
+    });
+    return uniqueItem;
+  });
 
   if (uniqueQuery.length === 0) {
     return errors;

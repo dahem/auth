@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -p 3306:3306 --name dahem-mysql -e MYSQL_ROOT_PASSWORD=duvetlain -d mysql:5.7
+docker run -p 7306:3306 --name ris-v2-db -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7

@@ -1,27 +1,16 @@
-module.exports = {
-  development: {
-    username: 'root',
-    password: 'duvetlain',
-    database: 'auth_db',
-    host: 'localhost',
-    port: 3306,
-    dialect: 'mysql',
-    logging: false,
-    dialectOptions: {
-      decimalNumbers: true,
-    },
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+module.exports = { // dont change to export default
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  dialect: 'mysql',
+  logging: process.env.DB_LOGGING === 'true',
+  dialectOptions: {
+    decimalNumbers: true,
   },
-  test: {
-    username: 'root',
-    password: 'duvetlain',
-    database: 'auth_db_test',
-    host: 'localhost',
-    port: 3306,
-    dialect: 'mysql',
-    logging: false,
-    dialectOptions: {
-      decimalNumbers: true,
-    },
-  },
-  production: {},
 };

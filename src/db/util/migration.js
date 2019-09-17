@@ -24,6 +24,19 @@ export const insertAndDeleteTable = (tableName, data) => ({
   down: queryInterface => queryInterface.bulkDelete(tableName),
 });
 
+export const insertAndDeleteUsingModel = (tableName, data, model) => ({
+  up: () => transaction(() => data.map(x => model.create(x))),
+  down: queryInterface => queryInterface.bulkDelete(tableName),
+});
+
+export const insertAndDeleteUsingFunc = (tableName, getData) => ({
+  up: queryInterface => transaction(async () => {
+    const data = await getData();
+    queryInterface.bulkInsert(tableName, data);
+  }),
+  down: queryInterface => queryInterface.bulkDelete(tableName),
+});
+
 export const timestampsColumns = Sequelize => ({
   createdAt: { type: Sequelize.DATE },
   updatedAt: { type: Sequelize.DATE },

@@ -9,7 +9,7 @@ export async function upsert(model, values) {
   return instance.update(values);
 }
 
-export function upsertMany(model, values) {
+export function manyUpsert(model, values) {
   return Promise.all(values.map(val => upsert(model, val)));
 }
 
@@ -17,7 +17,7 @@ export async function fullUpdate(model, id, body) {
   const instance = await model.findByPk(id);
   const allPromisses = Object.keys(model.associations).map(async (asscKey) => {
     if (body[asscKey]) {
-      const result = await upsertMany(model.associations[asscKey].target, body[asscKey]);
+      const result = await manyUpsert(model.associations[asscKey].target, body[asscKey]);
       await instance[`set${capitalize(asscKey)}`](result);
       return 1;
     }
@@ -29,15 +29,41 @@ export async function fullUpdate(model, id, body) {
   return instance.update(body);
 }
 
+async function updateAssoc(values, fieldName, id, model) {
+  let result = null;
+  if (Array.isArray(values)) {
+    const assocBody = values.map(x => ({
+      ...x,
+      [fieldName]: id,
+    }));
+    result = await manyUpsert(model, assocBody);
+  } else {
+    const assocBody = { ...values, [fieldName]: id };
+    result = await upsert(model, assocBody);
+  }
+  return result;
+}
+
 export async function fullCreate(model, body) {
   const instance = await model.create(body);
   const allPromisses = Object.keys(model.associations).map(async (asscKey) => {
-    if (body[asscKey]) {
-      const result = await upsertMany(model.associations[asscKey].target, body[asscKey]);
+    if (!body[asscKey]) return 0;
+
+    const assocModel = model.associations[asscKey].target;
+    const referenceFields = Object.values(assocModel.rawAttributes).filter(
+      field => field.references && field.references.model === model.name,
+    );
+
+    if (referenceFields.length === 1) {
+      const result = updateAssoc(
+        body[asscKey],
+        referenceFields[0].fieldName,
+        instance.id,
+        assocModel,
+      );
       await instance[`set${capitalize(asscKey)}`](result);
-      return 1;
     }
-    return 0;
+    return 1;
   });
 
   await Promise.all(allPromisses);

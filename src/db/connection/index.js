@@ -1,4 +1,12 @@
 import Sequelize from 'sequelize';
-import dbConfig from '../../config/dbConfig'; // not absolute path
+import { createNamespace } from 'cls-hooked';
 
-export default new Sequelize(dbConfig.development);
+import dbConfig from '../../config/dbConfig'; // not absolute path
+
+const ns = createNamespace('db');
+Sequelize.useCLS(ns);
+
+const sequelize = new Sequelize(dbConfig);
+sequelize.namespace = ns;
+
+export default sequelize;

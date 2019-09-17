@@ -1,37 +1,32 @@
 import Sequelize, { Model } from 'sequelize';
 
 export default (sequelize) => {
-  class Client extends Model {
-    static associate() {
-      this.belongsToMany(sequelize.models.User, {
-        through: 'ClientUser',
-        foreignKey: 'clientId',
-      });
-    }
-  }
-  Client.init(
+  class UserGroup extends Model {}
+  UserGroup.init(
     {
       name: {
         type: Sequelize.STRING,
-        canUpdate: false,
         allowNull: false,
       },
-      active: {
+      access: {
+        type: Sequelize.JSON,
+      },
+      isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: true,
       },
     },
     {
-      tableName: 'Client',
+      tableName: 'UserGroup',
       sequelize,
       timestamps: true,
       paranoid: true,
       name: {
-        singular: 'client',
-        plural: 'clients',
+        singular: 'userGroup',
+        plural: 'userGroups',
       },
     },
   );
-  return Client;
+  return UserGroup;
 };

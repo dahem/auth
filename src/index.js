@@ -1,7 +1,10 @@
+import logger from 'helpers/logger';
+import dotenv from 'dotenv';
 import app from './app';
 
-const port = process.env.APP_PORT || 6666;
+dotenv.config();
+const port = process.env.APP_PORT;
 
 app.listen(port, () => {
-  console.info(`Server running on port ${port}`);
+  logger.info(`Server running on port ${port}`);
 });
