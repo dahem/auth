@@ -6,6 +6,8 @@
   "scripts": {
     "seeders-dev": "npx sequelize-cli db:seed:all --seeders-path ./src/db/seeders-dev",
     "migrations": "npx sequelize-cli db:migrate",
+    "seeders-dev-undo-all": "npx sequelize-cli db:seed:undo:all --seeders-path ./src/db/seeders-dev",
+    "migrations-undo-all": "npx sequelize-cli db:migrate:undo:all",
     "start": "nodemon src/index.js --exec babel-node",
     "build": "babel src --out-dir dist",
     "serve": "node dist/index.js",
@@ -52,7 +54,7 @@
     "nodemon": "^1.19.1",
     "on-finished": "^2.3.0",
     "password-validator": "^4.1.2",
-    "sequelize": "^5.11.0",
+    "sequelize": "^5.19.0",
     "winston": "^3.2.1"
   }
 }

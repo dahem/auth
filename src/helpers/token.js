@@ -1,12 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-const tokenSecret = 'b0l1v4rjs#';
-
-export function verifyToken(token) {
-  return new Promise(resolve => resolve(jwt.verify(token, tokenSecret)));
+export function verifyToken(token, secretToken) {
+  return new Promise(resolve => resolve(jwt.verify(token, secretToken)));
 }
 
-export function buildToken(data) {
+export function buildToken(data, secretToken) {
   const expirationTimeInSeconds = 60 * 60 * 24;
-  return jwt.sign(data, tokenSecret, { expiresIn: expirationTimeInSeconds });
+  return jwt.sign(data, secretToken, { expiresIn: expirationTimeInSeconds });
 }

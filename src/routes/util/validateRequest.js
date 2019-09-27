@@ -16,8 +16,11 @@ function findMostCommon(numbers) {
   return mode;
 }
 
-export default validations => async (req, res, next) => {
+export default validationsParam => async (req, res, next) => {
   const statusErrors = [];
+  const validations = Array.isArray(validationsParam)
+    ? validationsParam : [validationsParam];
+
   await Promise.all(
     validations.map((item) => {
       let validation = null;

@@ -1,5 +1,6 @@
-import { isExtrictedObject } from 'helpers/object';
-import { capitalize } from 'helpers/string';
+import _ from 'lodash';
+import { isExtrictedObject, objHas } from 'helpers/object';
+import { unCapitalize, capitalize } from 'helpers/string';
 import { getErrorVerifyPk } from './validate';
 
 export async function upsert(model, values) {
@@ -13,19 +14,20 @@ export function manyUpsert(model, values) {
   return Promise.all(values.map(val => upsert(model, val)));
 }
 
-export async function fullUpdate(model, id, body) {
+export async function fullUpdate(model, id, bodyParam) {
   const instance = await model.findByPk(id);
+  const body = { ...bodyParam };
   const allPromisses = Object.keys(model.associations).map(async (asscKey) => {
     if (body[asscKey]) {
       const result = await manyUpsert(model.associations[asscKey].target, body[asscKey]);
       await instance[`set${capitalize(asscKey)}`](result);
+      delete body[asscKey];
       return 1;
     }
     return 0;
   });
 
   await Promise.all(allPromisses);
-
   return instance.update(body);
 }
 
@@ -89,4 +91,59 @@ export function unupdateFields(model) {
   return Object.values(model.rawAttributes)
     .filter(field => field.canUpdate === false)
     .map(field => field.fieldName);
+}
+
+export function getForeignKeys(model) {
+  return Object.values(model.rawAttributes)
+    .filter(x => isExtrictedObject(x.references));
+}
+
+export async function sanitizeDataWithForeignKeys(model, data) {
+  const foreignKeys = getForeignKeys(model);
+
+  const dictFk = await Promise.all(foreignKeys.map(async (fk) => {
+    const fkModelName = fk.references.model;
+    const fkfieldName = fk.name;
+    const fkValues = [...new Set(data.map(x => x[fkfieldName]))];
+
+    const fkModel = model.associations[unCapitalize(fkModelName)].target;
+    const fkListToDict = await fkModel.findAll({
+      where: { externalId: fkValues },
+      attributes: ['id', 'externalId'],
+      raw: true,
+    });
+
+    const dict = {};
+    fkListToDict.forEach((x) => { dict[x.externalId] = x.id; });
+
+    return dict;
+  }));
+
+  data.map((item) => {
+    foreignKeys.map(x => x.name).forEach((fk, idx) => {
+      if (objHas(item, fk)) {
+        item[fk] = dictFk[idx][item[fk]];
+      }
+    });
+    return item;
+  });
+
+  return data;
+}
+
+export async function importData(model, data, type) {
+  if (type === 'insert') {
+    await model.bulkCreate(data.map(x => _.omit(x, ['id'])));
+    return { ok: true };
+  }
+
+  const sanitizeData = await sanitizeDataWithForeignKeys(model, data);
+
+  await Promise.all(sanitizeData.map(async (item) => {
+    const instance = await model.findOne({ where: { externalId: item.externalId } });
+    if (!instance) return model.create(item);
+    return instance.update(item);
+  }));
+
+  return { ok: true };
 }
